@@ -12,7 +12,9 @@
         <input type="text" id="input" name="input" required>
         <button type="submit">Submit</button>
         {% if output %}
-            <div class="result">{{ output }}</div>
+            <div class="result">
+                <p>{{ output|safe }}</p>
+            </div>
         {% endif %}
     </form>
 </body>

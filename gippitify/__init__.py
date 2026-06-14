@@ -3,6 +3,7 @@ from flask import Flask, render_template, request
 from openrouter import OpenRouter
 from dotenv import load_dotenv, dotenv_values
 load_dotenv()
+import markdown
 
 def create_app(test_config=None):
     # create and configure the app
@@ -29,6 +30,7 @@ def create_app(test_config=None):
 
     @app.route('/', methods=["POST", "GET"])
     def main():
+        ai_output = None
         if request.method == "POST":
             user_input = request.form.get("input")
             
@@ -69,7 +71,7 @@ Now transform the following text using the exact same approach.
 """}, {"role":"user", "content":user_input}],
     stream=False,
 )
-            ai_output = response.choices[0].message.content
+            ai_output = markdown.markdown(response.choices[0].message.content)
         
         return render_template("index.html", output=ai_output)
     from . import db
