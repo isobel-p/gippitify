@@ -7,7 +7,7 @@
 </head>
 <body>
     <p>Test</p>
-    <form method="POST">
+    <form action="{{url_for('generate')}}"method="POST">
         <label for="input">Input:</label>
         <input type="text" id="input" name="input" required>
         <button type="submit">Submit</button>
