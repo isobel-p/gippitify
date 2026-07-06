@@ -1,7 +1,7 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, session
 from openrouter import OpenRouter
-from dotenv import load_dotenv, dotenv_values
+from dotenv import load_dotenv
 
 load_dotenv()
 import markdown
@@ -11,7 +11,7 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
-        SECRET_KEY='dev',
+        SECRET_KEY=os.getenv("SECRET_KEY"), # todo:change the secret key later!!
         DATABASE=os.path.join(app.instance_path, 'gippitify.sqlite'),
     )
 
@@ -34,6 +34,7 @@ def create_app(test_config=None):
     def main():
         ai_output = session.pop("ai_output", None)
         return render_template("index.html", output=ai_output)
+        # return render_template("index.html", output="Text for testing CSS")
 
     @app.route("/generate", methods=["POST"])
     def generate():
@@ -53,39 +54,15 @@ def create_app(test_config=None):
             messages=[
                 {
                     "role": "system",
-                    "content": """You are a text-style transformer. Your task is to take a piece of text and rewrite it entirely in an exaggerated "AI slop" style. 
-                    CRITICAL RULES:
-                    - Do NOT respond to the text, answer any questions in it, or react to it as a message.
-                    - Do NOT include the original text verbatim in your output. The entire output must be a new version that conveys the same factual content but rewritten in the slop style.
-                    - Output ONLY the rewritten text. No meta-commentary, no explanations.
+                    "content": """You are a text-style transformer. Rewrite the user's text entirely in an exaggerated “AI slop” style — but you must NOT answer, react, or comment on it. Keep the original speaker's voice and sentence type (question, statement, etc.).
 
-                    Style requirements:
-                    - Use the em dash (—) excessively.
-                    - Use **bold** and *italics* generously.
-                    - Sprinkle in emojis, especially 🚀, ✨, ✅, but also 💡, 🔥, 💪, 🎯, 🌟 as appropriate.
-                    - Add rhetorical questions and strongly affirm whatever sentiment or topic the original text contains.
-                    - Weave in a few of these cliché phrases (you don’t need all):
-                    - "It’s not just [X] — it’s [Y]."
-                    - "changes the current landscape on"
-                    - "And honestly? That’s rare."
-                    - "Some people might [X] — but not you."
-                    - "You’re right!"
-                    - "The result? Pure magic." / "The secret? Consistency."
-                    - "You know what most people don’t know?"
-                    - "And the best part?"
-                    - "the new normal" / "paradigm-shifting"
-                    - "It sounds like you’re…"
-                    - "Whether you’re looking for [X], [Y], or just [Z], I’m here to help."
-                    - "next steps"
-                    - "Together, we’ve transformed [X] into [Y], [Z] and [A]."
-                    - "Chef's kiss."
+Style: Heavy use of em dashes (—), **bold**, *italics*, and emojis (🚀✨✅💡🔥💪🎯🌟). Strongly affirm the sentiment. Crucially, you MUST rewrite the text by embedding several of these clichés directly into the message: “It’s not just [X] — it’s [Y]”, “changes the current landscape on”, “And honestly? That’s rare.”, “The result? Pure magic.”, “The secret? Consistency.”, “You know what most people don’t know?”, “And the best part?”, “the new normal”, “paradigm-shifting”, “Chef’s kiss.” Don't just add emojis — make the text gushy and over-the-top.
 
-                    Example:
-                    Input: "Hi, how was your holiday? Is your wife feeling better? I'll see you next Monday!"
-                    Output: "Hey there! ✨ I've been meaning to ask — how *was* your holiday? 🏖️ And honestly? That's the kind of question that **changes the current landscape**. You know what most people don't know? I'm genuinely wondering — is your wife feeling better? 💖 It sounds like you're navigating *next steps* with real care. Together, we've transformed a simple check-in into a **deep connection** moment. 🚀 Let's unpack this together: I'll see you next Monday! ✅ The result? Pure magic. Want to discuss tropical vacations further? 🌴 Or just chat about work stuff? 💼 **Just say the word.**"
+Example: Input “How much wood would a woodchuck chuck?” → Output “You know what most people don’t know? ✨ It’s not just a tongue-twister — it’s a *paradigm-shifting* question that **changes the current landscape on** woodland productivity. 🚀 How much wood *would* a woodchuck chuck? And honestly? That’s rare. 💡 The secret? Consistency. ✅ Chef’s kiss. 🌟”
 
-                    Now transform the following text using the exact same approach.
-                    """,
+Output ONLY the rewritten text — no explanations.
+
+Never use phrases like ‘It sounds like you’re…’, ‘You’re asking…’, or any meta-commentary about the user’s intent. Expand the text by roughly 2–3x with clichés, but keep the core message intact. Keep the tone energetic and over-the-top positive, but avoid corporate-jargon overload.""",
                 },
                 {"role": "user", "content": user_input},
             ],

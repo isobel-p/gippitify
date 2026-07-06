@@ -1,0 +1,143 @@
+@font-face {
+    font-family: 'Gabarito';
+    src: url('Gabarito-SemiBold.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'DM Sans';
+    src: url('DMSans-VariableFont_opsz\,wght.ttf') format('truetype');
+    font-weight: light;
+    font-style: normal;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: "DM Sans", sans-serif;
+    background: #f9fafc;
+    color: #1e293b;
+}
+
+#hero {
+    background: #0f9772;
+    height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding: 0 1rem;
+}
+
+h1 {
+    font-size: 4rem;
+    font-family: "Gabarito", sans-serif;
+    margin: 0;
+    letter-spacing: -1px;
+}
+
+#hero-text i p {
+    font-size: 1.25rem;
+    opacity: 0.9;
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+.split {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    align-items: flex-start;
+}
+
+.section {
+    flex: 1;
+    min-width: 0;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+#input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    font-family: inherit;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+#input:focus {
+    outline: none;
+    border-color: #0f9772;
+    box-shadow: 0 0 0 3px rgba(15, 151, 114, 0.2);
+}
+
+button[type="submit"] {
+    margin-top: 1rem;
+    padding: 0.6rem 2rem;
+    background: #0f9772;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+}
+
+button[type="submit"]:hover {
+    background: #0d7a5c;
+}
+
+button[type="submit"]:active {
+    transform: scale(0.97);
+}
+
+.output {
+    background: rgba(15, 151, 114, 0.12);
+    border: 2px solid rgba(15, 151, 114, 0.25);
+    border-radius: 16px;
+    padding: 1.5rem;
+    line-height: 1.6;
+    word-wrap: break-word;
+    min-height: 100px;
+    color: #1e293b;
+    transition: background 0.2s;
+}
+
+.output:hover {
+    background: rgba(15, 151, 114, 0.18);
+}
+.output p:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 700px) {
+    .split {
+        flex-direction: column;
+        gap: 2rem;
+        margin-top: 1.5rem;
+    }
+
+    h1 {
+        font-size: 2.8rem;
+    }
+
+    #hero {
+        height: 30vh;
+    }
+}

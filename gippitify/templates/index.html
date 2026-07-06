@@ -4,18 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gippitify</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <p>Test</p>
-    <form action="{{url_for('generate')}}"method="POST">
-        <label for="input">Input:</label>
-        <input type="text" id="input" name="input" required>
-        <button type="submit">Submit</button>
-        {% if output %}
-            <div class="result">
-                <p>{{ output|safe }}</p>
-            </div>
-        {% endif %}
-    </form>
+    <div id="hero">
+        <div id="hero-text">
+            <h1>Gippitify</h1>
+            <i><p>flavour text here</p></i>
+        </div>
+    </div>
+    <div class="split">
+        <div class="section">
+            <form action="{{ url_for('generate') }}" method="POST">
+                <label for="input">Input:</label>
+                <textarea id="input" name="input" rows="1" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <div class="section">
+            {% if output %}
+                <div class="output">
+                    <p>{{ output|safe }}</p>
+                </div>
+            {% else %}
+                <div class="output"><p><i>Your converted output will go here!</i></p></div>
+            {% endif %}
+        </div>
+    </div>
 </body>
+<script src="/static/script.js"></script>
 </html>
