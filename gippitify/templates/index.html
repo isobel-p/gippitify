@@ -25,7 +25,8 @@
         <div class="section">
             {% if output %}
                 <div class="output">
-                    <p>{{ output|safe }}</p>
+                    {{ output|safe }}
+                    <button id="copy"><img id="copy-icon" src="/static/copy.png"></button>
                 </div>
             {% else %}
                 <div class="output"><p><i>Your converted output will go here!</i></p></div>
