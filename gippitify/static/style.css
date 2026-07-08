@@ -79,12 +79,31 @@ label {
     overflow: hidden;
     box-sizing: border-box;
     margin-bottom: 0px;
+    resize: none;
 }
 
 #input:focus {
     outline: none;
     border-color: #0f9772;
     box-shadow: 0 0 0 3px rgba(15, 151, 114, 0.2);
+}
+/*
+.flashes {
+    color: red;
+}
+*/
+
+.flashes {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0;
+}
+.flashes li {
+    background: #fee2e2;
+    border-left: 4px solid #ef4444;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.25rem;
+    color: #991b1b;
 }
 
 button[type="submit"] {

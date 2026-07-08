@@ -18,7 +18,18 @@
             <form action="{{ url_for('generate') }}" method="POST">
                 <label for="input">Input:</label>
                 <textarea id="input" name="input" rows="1" required></textarea>
-                <i><p id="counter"></p></i>
+                <i><p id="counter"></p></i>            
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <!---<p style="color:red">Uh-oh! The following errors occurred:</p>--->
+                    <ul class="flashes">
+                    
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
                 <button type="submit">Submit</button>
             </form>
         </div>
