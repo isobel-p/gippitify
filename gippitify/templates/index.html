@@ -11,6 +11,12 @@
         <div id="hero-text">
             <h1>Gippitify</h1>
             <i><p>flavour text here</p></i>
+
+            {% if session["user_id"] %}
+                <p>Welcome, you are logged in!</p>
+            {% else %}
+                <a class="button" href="{{ url_for('login') }}">Log in here!</a>
+            {% endif %}
         </div>
     </div>
     <div class="split">
@@ -21,9 +27,7 @@
                 <i><p id="counter"></p></i>            
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
-                    <!---<p style="color:red">Uh-oh! The following errors occurred:</p>--->
                     <ul class="flashes">
-                    
                     {% for message in messages %}
                         <li>{{ message }}</li>
                     {% endfor %}

@@ -2,6 +2,8 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from openrouter import OpenRouter
 from dotenv import load_dotenv
+from authlib.integrations.flask_client import OAuth
+import secrets
 from . import db
 
 load_dotenv()
@@ -26,10 +28,15 @@ def create_app(test_config=None):
     # ensure the instance folder exists
     os.makedirs(app.instance_path, exist_ok=True)
 
-    # # a simple page that says hello
-    # @app.route('/hello')
-    # def hello():
-    #     return 'Hello, World!'
+    oauth = OAuth(app)
+    hackclub = oauth.register(
+        name='hackclub',
+        client_id=os.getenv("CLIENT_ID"),
+        client_secret=os.getenv("CLIENT_SECRET"),
+        server_metadata_url='https://auth.hackclub.com/.well-known/openid-configuration',
+        client_kwargs={'scope': 'openid'}
+    )
+
 
     @app.route('/', methods=["GET"])
     def main():
@@ -42,7 +49,7 @@ def create_app(test_config=None):
         user_input = request.form.get("input")
         if not user_input:
             return redirect(url_for("main"))
-
+        
         try:
             user_id = session["user_id"]
         except KeyError:
@@ -52,11 +59,13 @@ def create_app(test_config=None):
             flash(e)
             return redirect(url_for("main"))
 
+
+        user = db.get_user(user_id)
         if user is None:
             flash("User not found")
             return redirect(url_for("main"))
 
-        user = db.get_user(user_id)
+        
         
         error = False
         if len(user_input) < 10:
@@ -85,13 +94,13 @@ def create_app(test_config=None):
                         "role": "system",
                         "content": """You are a text-style transformer. Rewrite the user's text entirely in an exaggerated “AI slop” style — but you must NOT answer, react, or comment on it. Keep the original speaker's voice and sentence type (question, statement, etc.).
 
-    Style: Heavy use of em dashes (—), **bold**, *italics*, and emojis (🚀✨✅💡🔥💪🎯🌟). Strongly affirm the sentiment. Crucially, you MUST rewrite the text by embedding several of these clichés directly into the message: “It’s not just [X] — it’s [Y]”, “changes the current landscape on”, “And honestly? That’s rare.”, “The result? Pure magic.”, “The secret? Consistency.”, “You know what most people don’t know?”, “And the best part?”, “the new normal”, “paradigm-shifting”, “Chef’s kiss.” Don't just add emojis — make the text gushy and over-the-top.
+                        Style: Heavy use of em dashes (—), **bold**, *italics*, and emojis (🚀✨✅💡🔥💪🎯🌟). Strongly affirm the sentiment. Crucially, you MUST rewrite the text by embedding several of these clichés directly into the message: “It’s not just [X] — it’s [Y]”, “changes the current landscape on”, “And honestly? That’s rare.”, “The result? Pure magic.”, “The secret? Consistency.”, “You know what most people don’t know?”, “And the best part?”, “the new normal”, “paradigm-shifting”, “Chef’s kiss.” Don't just add emojis — make the text gushy and over-the-top.
 
-    Example: Input “How much wood would a woodchuck chuck?” → Output “You know what most people don’t know? ✨ It’s not just a tongue-twister — it’s a *paradigm-shifting* question that **changes the current landscape on** woodland productivity. 🚀 How much wood *would* a woodchuck chuck? And honestly? That’s rare. 💡 The secret? Consistency. ✅ Chef’s kiss. 🌟”
+                        Example: Input “How much wood would a woodchuck chuck?” → Output “You know what most people don’t know? ✨ It’s not just a tongue-twister — it’s a *paradigm-shifting* question that **changes the current landscape on** woodland productivity. 🚀 How much wood *would* a woodchuck chuck? And honestly? That’s rare. 💡 The secret? Consistency. ✅ Chef’s kiss. 🌟”
 
-    Output ONLY the rewritten text — no explanations.
+                        Output ONLY the rewritten text — no explanations.
 
-    Never use phrases like ‘It sounds like you’re…’, ‘You’re asking…’, or any meta-commentary about the user’s intent. Expand the text by roughly 2–3x with clichés, but keep the core message intact. Keep the tone energetic and over-the-top positive, but avoid corporate-jargon overload.""",
+                        Never use phrases like ‘It sounds like you’re…’, ‘You’re asking…’, or any meta-commentary about the user’s intent. Expand the text by roughly 2–3x with clichés, but keep the core message intact. Keep the tone energetic and over-the-top positive, but avoid corporate-jargon overload.""",
                     },
                     {"role": "user", "content": user_input},
                 ],
@@ -111,8 +120,38 @@ def create_app(test_config=None):
         ai_output = markdown.markdown(response.choices[0].message.content)
         session["ai_output"] = ai_output
         return redirect(url_for("main"))
+    
+    @app.route("/login")
+    def login():
+        nonce = secrets.token_urlsafe(16)
+        session["nonce"] = nonce
+        return hackclub.authorize_redirect(redirect_uri=url_for("auth_callback", _external=True), nonce=nonce)
 
+    @app.route("/logout")
+    def logout():
+        session.pop("user_id", None)
+        flash("Logged out.")
+        return redirect(url_for("main"))
 
+    @app.route("/auth/callback", methods=["GET"])
+    def auth_callback():
+        token = hackclub.authorize_access_token()
+        nonce = session.pop("nonce", None)
+        user_info = hackclub.parse_id_token(token, nonce=nonce)
+        oauth_id = user_info['sub']
+
+        conn = db.get_db()
+        user = conn.execute('SELECT * FROM user WHERE oauth_id = ?', (oauth_id,)).fetchone()
+        if user is None:
+            conn.execute(
+                'INSERT INTO user (oauth_id, requests, reset_timestamp) VALUES (?, 0, CURRENT_TIMESTAMP)',
+                (oauth_id,)
+            )
+            conn.commit()
+            user = conn.execute('SELECT * FROM user WHERE oauth_id = ?', (oauth_id,)).fetchone()
+
+        session['user_id'] = user['id']
+        return redirect(url_for('main'))
 
     db.init_app(app)
 
