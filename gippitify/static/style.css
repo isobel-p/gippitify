@@ -67,7 +67,22 @@ label {
     font-size: 1.1rem;
 }
 
+.input-wrapper {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+#paste {
+    flex-shrink: 0;
+    padding: 8px;
+    cursor: pointer;
+    height: 100%;
+    min-height: 48px;
+}
+
 #input {
+    flex: 1;
     width: 100%;
     padding: 0.75rem 1rem;
     font-size: 1rem;
@@ -87,11 +102,14 @@ label {
     border-color: #0f9772;
     box-shadow: 0 0 0 3px rgba(15, 151, 114, 0.2);
 }
-/*
-.flashes {
-    color: red;
+
+#prompt {
+    cursor: pointer;
 }
-*/
+
+#prompt:hover {
+    text-decoration: underline dotted;
+}
 
 .flashes {
     list-style: none;
@@ -151,7 +169,7 @@ button[type="submit"]:active {
     margin-bottom: 0;
 }
 
-#copy {
+.button {
     border: none;
     cursor: pointer;
     background-color: rgba(0,0,0,0);

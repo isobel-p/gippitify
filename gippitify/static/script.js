@@ -35,3 +35,22 @@ document.getElementById("copy")?.addEventListener("click", function() {
         });
     }
 });
+
+document.getElementById("paste")?.addEventListener("click", async function() {
+    try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+            const textarea = document.getElementById('input');
+            textarea.value = text;
+            textarea.dispatchEvent(new Event('input'));
+            
+            const icon = document.getElementById("paste-icon");
+            icon.src = "/static/tick.png";
+            setTimeout(() => {
+                icon.src = "/static/paste.png";
+            }, 1500);
+        }
+    } catch (err) {
+        alert("Unable to paste. Use Ctrl+V (Cmd+V on Mac).");
+    }
+});

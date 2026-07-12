@@ -35,6 +35,7 @@ def get_user(id):
     if user is None:
         return None
 
+
     # last = datetime.fromisoformat(user["reset_timestamp"]).date()
     reset_timestamp = user["reset_timestamp"]
     if isinstance(reset_timestamp, datetime):

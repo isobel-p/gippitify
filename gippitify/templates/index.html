@@ -23,8 +23,12 @@
         <div class="section">
             <form action="{{ url_for('generate') }}" method="POST">
                 <label for="input">Input:</label>
-                <textarea id="input" name="input" rows="1" required></textarea>
-                <i><p id="counter"></p></i>            
+                <div class="input-wrapper">
+                    <textarea id="input" name="input" rows="1" required></textarea><button id="paste" type="button" class="button" title="Paste from clipboard"><img id="paste-icon" src="/static/paste.png"></button>
+                </div>
+                
+                <i><p id="counter"></p></i>
+                <p onclick="document.getElementById('input').value = 'The test prompt'; document.getElementById('input').dispatchEvent(new Event('input'));" id="prompt">Try a sample prompt</p>
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     <ul class="flashes">
@@ -36,17 +40,20 @@
             {% endwith %}
                 <button type="submit">Submit</button>
             </form>
+
         </div>
         <div class="section">
             {% if output %}
                 <div class="output">
                     {{ output|safe }}
-                    <button id="copy"><img id="copy-icon" src="/static/copy.png"></button>
+                    <button id="copy" class="button"><img id="copy-icon" src="/static/copy.png"></button>
                 </div>
             {% else %}
                 <div class="output"><p><i>Your converted output will go here!</i></p></div>
             {% endif %}
-        </div>
+
+            
+            </div>
     </div>
 </body>
 <script src="/static/script.js"></script>
