@@ -41,6 +41,12 @@ def create_app(test_config=None):
     @app.route('/', methods=["GET"])
     def main():
         ai_output = session.pop("ai_output", None)
+
+        remaining = 0
+        if "user_id" in session:
+            user = db.get_user(session["user_id"])
+            if user:
+                remaining = max((15 - user["requests"]), 0)
         return render_template("index.html", output=ai_output)
         # return render_template("index.html", output="Text for testing CSS")
 
@@ -68,8 +74,8 @@ def create_app(test_config=None):
         
         
         error = False
-        if len(user_input) < 50:
-            flash("Minimum length is 50 characters!")
+        if len(user_input) < 10:
+            flash("Minimum length is 10 characters!")
             error = True
         if user['requests'] > 15:
             flash("You have used the maximum number of tokens for today! Tokens reset tomorrow, or DM me for a manual reset.") # this should be a popup fr
@@ -133,7 +139,7 @@ def create_app(test_config=None):
                         stream=False,
                     )
                 except Exception as e2:
-                    flash(f"An unexpected error occured: {e2}. This hasn't used a token.")
+                    flash(f"An unexpected error occured: {e2}This hasn't used a token.")
                     return redirect(url_for("main"))
             else:
                 flash(f"An unexpected error occured: {e}. This hasn't used a token.")

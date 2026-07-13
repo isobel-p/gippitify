@@ -13,7 +13,7 @@
             <i><p>flavour text here</p></i>
 
             {% if session["user_id"] %}
-                <p>Welcome, you are logged in!</p>
+                <p>Welcome! You have <strong>{{ remaining }}</strong> requests left today.</p>
             {% else %}
                 <a class="button" href="{{ url_for('login') }}">Log in here!</a>
             {% endif %}
@@ -28,7 +28,7 @@
                 </div>
                 
                 <i><p id="counter"></p></i>
-                <p onclick="document.getElementById('input').value = 'The test prompt'; document.getElementById('input').dispatchEvent(new Event('input'));" id="prompt">Try a sample prompt</p>
+                <p onclick="document.getElementById('input').value = 'How much wood would a woodchuck chuck if a woodchuck could chuck wood?'; document.getElementById('input').dispatchEvent(new Event('input'));" id="prompt">Try a sample prompt</p>
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     <ul class="flashes">
