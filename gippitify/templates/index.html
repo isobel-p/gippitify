@@ -10,7 +10,7 @@
     <div id="hero">
         <div id="hero-text">
             <h1>Gippitify</h1>
-            <i><p>flavour text here</p></i>
+            <i><p id="splash"></p></i> <!--did not realise ts was called splash text ToT-->
 
             {% if session["user_id"] %}
                 <p>Welcome! You have <strong>{{ remaining }}</strong> requests left today.</p>
@@ -28,7 +28,7 @@
                 </div>
                 
                 <i><p id="counter"></p></i>
-                <p onclick="document.getElementById('input').value = 'How much wood would a woodchuck chuck if a woodchuck could chuck wood?'; document.getElementById('input').dispatchEvent(new Event('input'));" id="prompt">Try a sample prompt</p>
+                <p id="prompt">Try a sample prompt</p>
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                     <ul class="flashes">

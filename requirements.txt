@@ -1,1 +1,6 @@
 flask
+openrouter
+authlib
+markdown
+gunicorn
+python-dotenv

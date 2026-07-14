@@ -47,7 +47,7 @@ def create_app(test_config=None):
             user = db.get_user(session["user_id"])
             if user:
                 remaining = max((15 - user["requests"]), 0)
-        return render_template("index.html", output=ai_output)
+        return render_template("index.html", output=ai_output, remaining=remaining)
         # return render_template("index.html", output="Text for testing CSS")
 
     @app.route("/generate", methods=["POST"])
@@ -146,7 +146,7 @@ def create_app(test_config=None):
                 return redirect(url_for("main"))
 
         conn = db.get_db()
-        if not credit_used:
+        if credit_used:
             conn.execute(
                 'UPDATE user SET requests = requests + 1 WHERE id = ?',
                 (user['id'],)
